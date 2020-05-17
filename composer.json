@@ -1,0 +1,34 @@
+{
+    "name": "klipper/data-loader-security",
+    "type": "library",
+    "description": "Data Loader Security component of Klipper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "François Pluchino",
+            "email": "francois.pluchino@klipper.dev"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.4.0",
+        "klipper/data-loader": "^2.0.0",
+        "klipper/model": "^2.0.0",
+        "klipper/resource": "^2.0.0",
+        "klipper/security": "^2.0.0",
+        "symfony/config": "^4.4.0",
+        "symfony/yaml": "^4.4.0"
+    },
+    "autoload": {
+        "psr-4": { "Klipper\\Component\\DataLoaderSecurity\\": "" },
+        "exclude-from-classmap": [
+            "**/Tests/"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
+    }
+}
