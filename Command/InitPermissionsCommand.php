@@ -11,6 +11,7 @@
 
 namespace Klipper\Component\DataLoaderSecurity\Command;
 
+use Klipper\Component\Console\Command\RequiredCommandsInterface;
 use Klipper\Component\DataLoaderSecurity\Permission\YamlPermissionLoader;
 use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Security\Model\PermissionInterface;
@@ -24,7 +25,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class InitPermissionsCommand extends Command
+class InitPermissionsCommand extends Command implements RequiredCommandsInterface
 {
     private DomainManagerInterface $domainManager;
 
@@ -36,6 +37,13 @@ class InitPermissionsCommand extends Command
 
         $this->domainManager = $domainManager;
         $this->projectDir = $projectDir;
+    }
+
+    public function getRequiredCommands(): array
+    {
+        return [
+            'init:roles',
+        ];
     }
 
     /**

@@ -12,6 +12,7 @@
 namespace Klipper\Component\DataLoaderSecurity\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Klipper\Component\Console\Command\RequiredCommandsInterface;
 use Klipper\Component\DataLoader\Exception\ConsoleResourceException;
 use Klipper\Component\Model\Traits\EmailableInterface;
 use Klipper\Component\Resource\Domain\DomainManagerInterface;
@@ -32,7 +33,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class InitOrganizationCommand extends Command
+class InitOrganizationCommand extends Command implements RequiredCommandsInterface
 {
     public const ORGANIZATION_NAME = 'org-admin';
     public const ORGANIZATION_LABEL = 'Organization Admin';
@@ -60,6 +61,14 @@ class InitOrganizationCommand extends Command
         $this->domainManager = $domainManager;
         $this->validator = $validator;
         $this->passwordEncoder = $passwordEncoder;
+    }
+
+    public function getRequiredCommands(): array
+    {
+        return [
+            'init:roles',
+            'init:permissions',
+        ];
     }
 
     /**

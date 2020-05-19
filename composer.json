@@ -13,6 +13,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^7.4.0",
+        "klipper/console": "^2.0.0",
         "klipper/data-loader": "^2.0.0",
         "klipper/model": "^2.0.0",
         "klipper/resource": "^2.0.0",
