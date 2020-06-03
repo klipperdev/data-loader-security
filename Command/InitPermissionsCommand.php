@@ -46,9 +46,6 @@ class InitPermissionsCommand extends Command implements RequiredCommandsInterfac
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -58,8 +55,6 @@ class InitPermissionsCommand extends Command implements RequiredCommandsInterfac
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): void

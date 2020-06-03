@@ -71,9 +71,6 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -83,9 +80,7 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws \Exception
+     * @throws \Throwable
      */
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
@@ -147,7 +142,7 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
 
             $this->em->flush();
             $this->em->commit();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->em->rollback();
 
             throw $e;

@@ -37,9 +37,6 @@ class InitRolesCommand extends Command
         $this->projectDir = $projectDir;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -49,8 +46,6 @@ class InitRolesCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): void

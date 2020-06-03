@@ -41,8 +41,6 @@ abstract class BasePermissionLoader implements DataLoaderInterface
     protected bool $hasUpdatedRoles = false;
 
     /**
-     * Constructor.
-     *
      * @param DomainInterface              $domainPermission The resource domain of permission
      * @param DomainInterface              $domainRole       The resource domain of role
      * @param null|PermissionConfiguration $config           The permission configuration
@@ -60,9 +58,6 @@ abstract class BasePermissionLoader implements DataLoaderInterface
         $this->processor = $processor ?? new PermissionProcessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load($resource): void
     {
         if (!$this->supports($resource)) {

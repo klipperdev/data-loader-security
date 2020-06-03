@@ -20,9 +20,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class PermissionConfiguration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('klipper_permissions');

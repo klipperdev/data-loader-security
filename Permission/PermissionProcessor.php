@@ -22,8 +22,6 @@ class PermissionProcessor
     protected Processor $processor;
 
     /**
-     * Constructor.
-     *
      * @param null|Processor $processor The config processor
      */
     public function __construct(?Processor $processor = null)
