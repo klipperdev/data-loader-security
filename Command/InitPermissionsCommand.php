@@ -57,7 +57,7 @@ class InitPermissionsCommand extends Command implements RequiredCommandsInterfac
     /**
      * @throws \Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $domainPermission = $this->domainManager->get(PermissionInterface::class);
         $domainRole = $this->domainManager->get(RoleInterface::class);
@@ -71,5 +71,7 @@ class InitPermissionsCommand extends Command implements RequiredCommandsInterfac
         } else {
             $output->writeln('  The system permissions are already up to date');
         }
+
+        return 0;
     }
 }

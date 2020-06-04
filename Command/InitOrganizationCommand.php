@@ -82,7 +82,7 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
     /**
      * @throws \Throwable
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $domainUser = $this->domainManager->get(UserInterface::class);
         $domainOrg = $this->domainManager->get(OrganizationInterface::class);
@@ -93,7 +93,7 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
         if (null !== $org) {
             $output->writeln('  The organization system and the super admin user are already created');
 
-            return;
+            return 0;
         }
 
         $this->em->beginTransaction();
@@ -149,6 +149,8 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
         }
 
         $output->writeln('  The organization system and the super admin user are created');
+
+        return 0;
     }
 
     protected function validate($entity): void

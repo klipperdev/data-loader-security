@@ -48,7 +48,7 @@ class InitRolesCommand extends Command
     /**
      * @throws \Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $domain = $this->domainManager->get(RoleInterface::class);
         $loader = new YamlUniqueEntityLoader($domain);
@@ -61,5 +61,7 @@ class InitRolesCommand extends Command
         } else {
             $output->writeln('  The system roles are already up to date');
         }
+
+        return 0;
     }
 }
