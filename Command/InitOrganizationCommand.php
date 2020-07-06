@@ -88,9 +88,13 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
         $domainOrg = $this->domainManager->get(OrganizationInterface::class);
         $domainOrgUser = $this->domainManager->get(OrganizationUserInterface::class);
 
-        $org = $domainOrg->getRepository()->findOneBy(['name' => self::ORGANIZATION_NAME]);
+        $count = (int) $domainOrg->createQueryBuilder('o')
+            ->select('count(o)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
 
-        if (null !== $org) {
+        if ($count > 0) {
             $output->writeln('  The organization system and the super admin user are already created');
 
             return 0;
