@@ -12,6 +12,8 @@
 namespace Klipper\Component\DataLoaderSecurity\Command;
 
 use Klipper\Component\Console\Command\RequiredCommandsInterface;
+use Klipper\Component\DataLoader\Exception\ConsoleResourceException;
+use Klipper\Component\DataLoader\Exception\InvalidArgumentException;
 use Klipper\Component\DataLoaderSecurity\Permission\YamlPermissionLoader;
 use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Security\Model\PermissionInterface;
@@ -64,7 +66,15 @@ class InitPermissionsCommand extends Command implements RequiredCommandsInterfac
         $loader = new YamlPermissionLoader($domainPermission, $domainRole);
         $file = $this->projectDir.'/config/data/security_permissions.yaml';
 
-        $loader->load($file);
+        if (!$loader->supports($file)) {
+            throw new InvalidArgumentException('The resource is not supported by this data loader');
+        }
+
+        $res = $loader->load($file);
+
+        if ($res->hasErrors()) {
+            throw new ConsoleResourceException($res, 'operation');
+        }
 
         if ($loader->hasNewPermissions() || $loader->hasUpdatedPermissions() || $loader->hasUpdatedRoles()) {
             $output->writeln('  The system permissions have been initialized');

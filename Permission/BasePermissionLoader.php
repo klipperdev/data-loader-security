@@ -13,10 +13,11 @@ namespace Klipper\Component\DataLoaderSecurity\Permission;
 
 use Klipper\Component\DataLoader\DataLoaderInterface;
 use Klipper\Component\DataLoader\Exception\ConsoleResourceException;
-use Klipper\Component\DataLoader\Exception\InvalidArgumentException;
 use Klipper\Component\DataLoader\Exception\RuntimeException;
 use Klipper\Component\Model\Traits\LabelableInterface;
 use Klipper\Component\Resource\Domain\DomainInterface;
+use Klipper\Component\Resource\ResourceList;
+use Klipper\Component\Resource\ResourceListInterface;
 use Klipper\Component\Security\Model\PermissionInterface;
 use Klipper\Component\Security\Model\RoleInterface;
 use Klipper\Component\Security\Permission\PermissionUtils;
@@ -58,16 +59,12 @@ abstract class BasePermissionLoader implements DataLoaderInterface
         $this->processor = $processor ?? new PermissionProcessor();
     }
 
-    public function load($resource): void
+    public function load($resource): ResourceListInterface
     {
-        if (!$this->supports($resource)) {
-            throw new InvalidArgumentException('The resource is not supported by this data loader');
-        }
-
         $content = $this->loadContent($resource);
         $config = $this->processor->process($this->config, [$content]);
 
-        $this->doLoad($config);
+        return $this->doLoad($config);
     }
 
     /**
@@ -106,13 +103,14 @@ abstract class BasePermissionLoader implements DataLoaderInterface
      *
      * @param array $config The config of permissions
      */
-    private function doLoad(array $config): void
+    private function doLoad(array $config): ResourceListInterface
     {
         $roles = $this->getUsedRoles($config);
         $permissions = $this->getPermissions();
 
         $fullPermissions = $this->loadPermissions($config, $permissions);
-        $this->loadRolePermissions($config, $fullPermissions, $roles);
+
+        return $this->loadRolePermissions($config, $fullPermissions, $roles);
     }
 
     /**
@@ -122,7 +120,7 @@ abstract class BasePermissionLoader implements DataLoaderInterface
      * @param array           $permissions The permission map
      * @param RoleInterface[] $roles       The used roles
      */
-    private function loadRolePermissions(array $config, array $permissions, array $roles): void
+    private function loadRolePermissions(array $config, array $permissions, array $roles): ResourceListInterface
     {
         $updates = [];
 
@@ -137,12 +135,10 @@ abstract class BasePermissionLoader implements DataLoaderInterface
         }
 
         if (!empty($updates)) {
-            $res = $this->domainRole->updates(array_values($updates));
-
-            if ($res->hasErrors()) {
-                throw new ConsoleResourceException($res, 'operation');
-            }
+            return $this->domainRole->updates(array_values($updates));
         }
+
+        return new ResourceList();
     }
 
     /**
