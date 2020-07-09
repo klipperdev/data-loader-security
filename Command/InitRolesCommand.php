@@ -11,7 +11,7 @@
 
 namespace Klipper\Component\DataLoaderSecurity\Command;
 
-use Klipper\Component\DataLoader\Entity\YamlUniqueNameableEntityLoader;
+use Klipper\Component\DataLoader\Entity\YamlUniqueSystemNameableEntityLoader;
 use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Security\Model\RoleInterface;
 use Symfony\Component\Console\Command\Command;
@@ -51,7 +51,7 @@ class InitRolesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $domain = $this->domainManager->get(RoleInterface::class);
-        $loader = new YamlUniqueNameableEntityLoader($domain);
+        $loader = new YamlUniqueSystemNameableEntityLoader($domain);
         $file = $this->projectDir.'/config/data/security_roles.yaml';
 
         $loader->load($file);
