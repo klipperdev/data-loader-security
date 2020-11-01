@@ -12,6 +12,7 @@
 namespace Klipper\Component\DataLoaderSecurity\Command;
 
 use Klipper\Component\DataLoader\Entity\YamlUniqueSystemNameableEntityLoader;
+use Klipper\Component\DataLoader\Exception\ConsoleResourceException;
 use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Security\Model\RoleInterface;
 use Symfony\Component\Console\Command\Command;
@@ -54,7 +55,11 @@ class InitRolesCommand extends Command
         $loader = new YamlUniqueSystemNameableEntityLoader($domain);
         $file = $this->projectDir.'/config/data/security_roles.yaml';
 
-        $loader->load($file);
+        $res = $loader->load($file);
+
+        if ($res->hasErrors()) {
+            throw new ConsoleResourceException($res);
+        }
 
         if ($loader->hasNewEntities() || $loader->hasUpdatedEntities()) {
             $output->writeln('  The system roles have been initialized');
