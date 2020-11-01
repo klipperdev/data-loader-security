@@ -12,35 +12,19 @@
 namespace Klipper\Component\DataLoaderSecurity\Command;
 
 use Klipper\Component\Console\Command\RequiredCommandsInterface;
-use Klipper\Component\DataLoader\Exception\ConsoleResourceException;
-use Klipper\Component\DataLoader\Exception\InvalidArgumentException;
+use Klipper\Component\DataLoader\Command\AbstractDataLoaderCommand;
+use Klipper\Component\DataLoader\DataLoaderInterface;
 use Klipper\Component\DataLoaderSecurity\Permission\YamlPermissionLoader;
-use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Security\Model\PermissionInterface;
 use Klipper\Component\Security\Model\RoleInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Init the system permissions.
  *
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class InitPermissionsCommand extends Command implements RequiredCommandsInterface
+class InitPermissionsCommand extends AbstractDataLoaderCommand implements RequiredCommandsInterface
 {
-    private DomainManagerInterface $domainManager;
-
-    private string $projectDir;
-
-    public function __construct(DomainManagerInterface $domainManager, string $projectDir)
-    {
-        parent::__construct();
-
-        $this->domainManager = $domainManager;
-        $this->projectDir = $projectDir;
-    }
-
     public function getRequiredCommands(): array
     {
         return [
@@ -56,32 +40,34 @@ class InitPermissionsCommand extends Command implements RequiredCommandsInterfac
         ;
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function getDataLoader(): DataLoaderInterface
     {
         $domainPermission = $this->domainManager->get(PermissionInterface::class);
         $domainRole = $this->domainManager->get(RoleInterface::class);
-        $loader = new YamlPermissionLoader($domainPermission, $domainRole);
-        $file = $this->projectDir.'/config/data/security_permissions.yaml';
 
-        if (!$loader->supports($file)) {
-            throw new InvalidArgumentException('The resource is not supported by this data loader');
-        }
+        return new YamlPermissionLoader($domainPermission, $domainRole);
+    }
 
-        $res = $loader->load($file);
+    protected function getFindFileNames(): array
+    {
+        return [
+            'security_permissions.yaml',
+            'security_permissions_*.yaml',
+        ];
+    }
 
-        if ($res->hasErrors()) {
-            throw new ConsoleResourceException($res, 'operation');
-        }
+    protected function getEmptyMessage(): string
+    {
+        return 'No system permissions are defined';
+    }
 
-        if ($loader->hasNewPermissions() || $loader->hasUpdatedPermissions() || $loader->hasUpdatedRoles()) {
-            $output->writeln('  The system permissions have been initialized');
-        } else {
-            $output->writeln('  The system permissions are already up to date');
-        }
+    protected function getInitializedMessage(): string
+    {
+        return 'The system permissions have been initialized';
+    }
 
-        return 0;
+    protected function getUpToDateMessage(): string
+    {
+        return 'The system permissions are already up to date';
     }
 }

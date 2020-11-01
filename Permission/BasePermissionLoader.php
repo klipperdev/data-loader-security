@@ -11,9 +11,9 @@
 
 namespace Klipper\Component\DataLoaderSecurity\Permission;
 
-use Klipper\Component\DataLoader\DataLoaderInterface;
 use Klipper\Component\DataLoader\Exception\ConsoleResourceException;
 use Klipper\Component\DataLoader\Exception\RuntimeException;
+use Klipper\Component\DataLoader\StateableDataLoaderInterface;
 use Klipper\Component\Model\Traits\LabelableInterface;
 use Klipper\Component\Resource\Domain\DomainInterface;
 use Klipper\Component\Resource\ResourceList;
@@ -25,7 +25,7 @@ use Klipper\Component\Security\Permission\PermissionUtils;
 /**
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-abstract class BasePermissionLoader implements DataLoaderInterface
+abstract class BasePermissionLoader implements StateableDataLoaderInterface
 {
     protected DomainInterface $domainPermission;
 
@@ -89,6 +89,21 @@ abstract class BasePermissionLoader implements DataLoaderInterface
     public function hasUpdatedRoles(): bool
     {
         return $this->hasUpdatedRoles;
+    }
+
+    public function hasNewValues(): bool
+    {
+        return $this->hasNewPermissions;
+    }
+
+    public function hasUpdatedValues(): bool
+    {
+        return $this->hasUpdatedPermissions || $this->hasUpdatedRoles;
+    }
+
+    public function isEdited(): bool
+    {
+        return $this->hasNewPermissions || $this->hasUpdatedPermissions || $this->hasUpdatedRoles;
     }
 
     /**

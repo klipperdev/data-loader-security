@@ -11,33 +11,18 @@
 
 namespace Klipper\Component\DataLoaderSecurity\Command;
 
+use Klipper\Component\DataLoader\Command\AbstractDataLoaderCommand;
+use Klipper\Component\DataLoader\DataLoaderInterface;
 use Klipper\Component\DataLoader\Entity\YamlUniqueSystemNameableEntityLoader;
-use Klipper\Component\DataLoader\Exception\ConsoleResourceException;
-use Klipper\Component\Resource\Domain\DomainManagerInterface;
 use Klipper\Component\Security\Model\RoleInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Init the system roles.
  *
  * @author François Pluchino <francois.pluchino@klipper.dev>
  */
-class InitRolesCommand extends Command
+class InitRolesCommand extends AbstractDataLoaderCommand
 {
-    private DomainManagerInterface $domainManager;
-
-    private string $projectDir;
-
-    public function __construct(DomainManagerInterface $domainManager, string $projectDir)
-    {
-        parent::__construct();
-
-        $this->domainManager = $domainManager;
-        $this->projectDir = $projectDir;
-    }
-
     protected function configure(): void
     {
         $this
@@ -46,27 +31,31 @@ class InitRolesCommand extends Command
         ;
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function getDataLoader(): DataLoaderInterface
     {
-        $domain = $this->domainManager->get(RoleInterface::class);
-        $loader = new YamlUniqueSystemNameableEntityLoader($domain);
-        $file = $this->projectDir.'/config/data/security_roles.yaml';
+        return new YamlUniqueSystemNameableEntityLoader($this->domainManager->get(RoleInterface::class));
+    }
 
-        $res = $loader->load($file);
+    protected function getFindFileNames(): array
+    {
+        return [
+            'security_roles.yaml',
+            'security_roles_*.yaml',
+        ];
+    }
 
-        if ($res->hasErrors()) {
-            throw new ConsoleResourceException($res);
-        }
+    protected function getEmptyMessage(): string
+    {
+        return 'No system roles are defined';
+    }
 
-        if ($loader->hasNewEntities() || $loader->hasUpdatedEntities()) {
-            $output->writeln('  The system roles have been initialized');
-        } else {
-            $output->writeln('  The system roles are already up to date');
-        }
+    protected function getInitializedMessage(): string
+    {
+        return 'The system roles have been initialized';
+    }
 
-        return 0;
+    protected function getUpToDateMessage(): string
+    {
+        return 'The system roles are already up to date';
     }
 }
