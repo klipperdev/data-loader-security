@@ -25,7 +25,8 @@ use Klipper\Contracts\Model\LabelableInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -47,20 +48,20 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
 
     private ValidatorInterface $validator;
 
-    private UserPasswordEncoderInterface $passwordEncoder;
+    private UserPasswordHasherInterface $passwordHasher;
 
     public function __construct(
         EntityManagerInterface $em,
         DomainManagerInterface $domainManager,
         ValidatorInterface $validator,
-        UserPasswordEncoderInterface $passwordEncoder
+        UserPasswordHasherInterface $passwordHasher
     ) {
         parent::__construct();
 
         $this->em = $em;
         $this->domainManager = $domainManager;
         $this->validator = $validator;
-        $this->passwordEncoder = $passwordEncoder;
+        $this->passwordHasher = $passwordHasher;
     }
 
     public function getRequiredCommands(): array
@@ -88,7 +89,7 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
         $domainOrg = $this->domainManager->get(OrganizationInterface::class);
         $domainOrgUser = $this->domainManager->get(OrganizationUserInterface::class);
 
-        $count = (int) $domainOrg->createQueryBuilder('o')
+        $count = (int) $domainOrg->createQueryBuilder()
             ->select('count(o)')
             ->getQuery()
             ->getSingleScalarResult()
@@ -113,11 +114,11 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
 
             $this->validate($org);
 
-            /** @var UserInterface $user */
+            /** @var UserInterface&PasswordAuthenticatedUserInterface $user */
             $user = $domainUser->newInstance();
             $user
                 ->setUsername(self::USERNAME)
-                ->setPassword($this->passwordEncoder->encodePassword($user, self::USER_PASSWORD))
+                ->setPassword($this->passwordHasher->hashPassword($user, self::USER_PASSWORD))
                 ->addRole('ROLE_SUPER_ADMIN')
             ;
 
