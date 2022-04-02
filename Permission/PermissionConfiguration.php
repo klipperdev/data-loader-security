@@ -23,6 +23,7 @@ class PermissionConfiguration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('klipper_permissions');
+
         /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode
@@ -43,6 +44,7 @@ class PermissionConfiguration implements ConfigurationInterface
     private function getClassesNode(): ArrayNodeDefinition
     {
         $treeBuilder = new TreeBuilder('permission_classes');
+
         /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode
@@ -86,6 +88,7 @@ class PermissionConfiguration implements ConfigurationInterface
     private function buildPermissionsNode(string $name): ArrayNodeDefinition
     {
         $treeBuilder = new TreeBuilder($name);
+
         /** @var ArrayNodeDefinition $node */
         $node = $treeBuilder->getRootNode();
         $node

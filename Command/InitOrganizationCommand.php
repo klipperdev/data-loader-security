@@ -114,7 +114,7 @@ class InitOrganizationCommand extends Command implements RequiredCommandsInterfa
 
             $this->validate($org);
 
-            /** @var UserInterface&PasswordAuthenticatedUserInterface $user */
+            /** @var PasswordAuthenticatedUserInterface|UserInterface $user */
             $user = $domainUser->newInstance();
             $user
                 ->setUsername(self::USERNAME)

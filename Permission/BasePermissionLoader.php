@@ -328,6 +328,7 @@ abstract class BasePermissionLoader implements StateableDataLoaderInterface
     {
         $usedRoles = $this->findUsedRoles($config);
         $mapRoles = [];
+
         /** @var RoleInterface[] $roles */
         $roles = [];
 
